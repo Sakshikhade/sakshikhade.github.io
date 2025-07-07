@@ -1,12 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
 import { Calendar, MapPin, Building } from 'lucide-react';
 
 const Experience: React.FC = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
 
   const experiences = [
     {
@@ -36,12 +32,11 @@ const Experience: React.FC = () => {
   ];
 
   return (
-    <section id="experience" className="py-20 bg-white dark:bg-gray-900">
+    <section className="h-full flex items-center justify-center py-20 bg-white dark:bg-gray-900 overflow-y-auto">
       <div className="container mx-auto px-4">
         <motion.div
-          ref={ref}
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
@@ -53,7 +48,7 @@ const Experience: React.FC = () => {
               <motion.div
                 key={exp.title}
                 initial={{ opacity: 0, x: -30 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 className="bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all"
               >

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { ExternalLink, Github, Filter } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ExternalLink, Github, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Projects: React.FC = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
   const [activeFilter, setActiveFilter] = useState('All');
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
 
   const projects = [
     {
@@ -73,104 +70,179 @@ const Projects: React.FC = () => {
     ? projects 
     : projects.filter(project => project.category === activeFilter);
 
+  const nextProject = () => {
+    setCurrentProjectIndex((prev) => (prev + 1) % filteredProjects.length);
+  };
+
+  const prevProject = () => {
+    setCurrentProjectIndex((prev) => (prev - 1 + filteredProjects.length) % filteredProjects.length);
+  };
+
+  const handleFilterChange = (category: string) => {
+    setActiveFilter(category);
+    setCurrentProjectIndex(0);
+  };
+
+  if (filteredProjects.length === 0) return null;
+
+  const currentProject = filteredProjects[currentProjectIndex];
+
   return (
-    <section id="projects" className="py-20 bg-gray-50 dark:bg-gray-800">
-      <div className="container mx-auto px-4">
+    <section className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800">
+      <div className="container mx-auto px-6 py-8">
         <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
+          className="max-w-6xl mx-auto"
         >
-          <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-            Featured Projects
-          </h2>
-          
-          {/* Filter buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveFilter(category)}
-                className={`px-6 py-3 rounded-full font-medium transition-all ${
-                  activeFilter === category
-                    ? 'bg-maroon-600 text-white shadow-lg'
-                    : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-maroon-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
+              Featured Projects
+            </h2>
+            
+            {/* Filter buttons */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {categories.map((category) => {
+                const isActive = activeFilter === category || 
+                  (activeFilter === 'All' && category === currentProject.category);
+                
+                return (
+                  <button
+                    key={category}
+                    onClick={() => handleFilterChange(category)}
+                    className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
+                      isActive
+                        ? 'bg-maroon-600 text-white shadow-lg'
+                        : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-maroon-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          
-          <div className="grid lg:grid-cols-2 gap-8">
-            {filteredProjects.map((project, index) => (
+
+          {/* Carousel Container */}
+          <div className="relative px-24">
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevProject}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white dark:bg-gray-900 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              disabled={filteredProjects.length <= 1}
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            </button>
+            
+            <button
+              onClick={nextProject}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white dark:bg-gray-900 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              disabled={filteredProjects.length <= 1}
+            >
+              <ChevronRight className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            </button>
+
+            {/* Project Card */}
+            <AnimatePresence mode="wait">
               <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-xl transition-all p-8"
+                key={`${activeFilter}-${currentProjectIndex}`}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 min-h-[500px] max-w-4xl mx-auto"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-maroon-100 dark:bg-maroon-900 text-maroon-700 dark:text-maroon-300 rounded-full text-sm">
-                    {project.category}
-                  </span>
-                  <div className="flex space-x-3">
-                    <a
-                      href={project.demoUrl}
-                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
-                      aria-label="View demo"
-                    >
-                      <ExternalLink className="w-5 h-5" />
-                    </a>
-                    <a
-                      href={project.githubUrl}
-                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
-                      aria-label="View source"
-                    >
-                      <Github className="w-5 h-5" />
-                    </a>
+                <div className="grid md:grid-cols-2 gap-8 items-start h-full">
+                  {/* Left Column - Project Info */}
+                  <div className="flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="px-3 py-1 bg-maroon-100 dark:bg-maroon-900 text-maroon-700 dark:text-maroon-300 rounded-full text-sm font-medium">
+                          {currentProject.category}
+                        </span>
+                        <div className="flex space-x-3">
+                          <a
+                            href={currentProject.demoUrl}
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
+                            aria-label="View demo"
+                          >
+                            <ExternalLink className="w-5 h-5" />
+                          </a>
+                          <a
+                            href={currentProject.githubUrl}
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
+                            aria-label="View source"
+                          >
+                            <Github className="w-5 h-5" />
+                          </a>
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                        {currentProject.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                        {currentProject.description}
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {currentProject.technologies.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Right Column - Achievements */}
+                  <div className="flex flex-col h-full">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                      Key Achievements
+                    </h4>
+                    <ul className="space-y-3 flex-grow">
+                      {currentProject.achievements.map((achievement, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start text-gray-600 dark:text-gray-300"
+                        >
+                          <span className="w-2 h-2 bg-maroon-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                          {achievement}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-                
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  {project.title}
-                </h3>
-                
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  {project.description}
-                </p>
-                
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                    Key Achievements:
-                  </h4>
-                  <ul className="space-y-2">
-                    {project.achievements.map((achievement, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start text-sm text-gray-600 dark:text-gray-300"
-                      >
-                        <span className="w-1.5 h-1.5 bg-maroon-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                        {achievement}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
               </motion.div>
-            ))}
+            </AnimatePresence>
+
+            {/* Dots Indicator */}
+            <div className="flex justify-center mt-8 space-x-2">
+              {filteredProjects.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentProjectIndex(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentProjectIndex
+                      ? 'bg-maroon-600 w-8'
+                      : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Project Counter */}
+            <div className="text-center mt-6">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {currentProjectIndex + 1} of {filteredProjects.length}
+              </span>
+            </div>
           </div>
         </motion.div>
       </div>
