@@ -52,7 +52,7 @@ const Hero: React.FC = () => {
             
             <div className="relative group">
               <a
-                href="https://linkedin.com/in/SAKSHI-KHADE"
+                href="https://linkedin.com/in/sakshikhade16/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 px-6 py-3 border-2 border-maroon-600 text-maroon-600 dark:text-gold-400 dark:border-gold-400 rounded-full hover:bg-maroon-600 hover:text-white dark:hover:bg-gold-400 dark:hover:text-gray-900 transition-colors"
