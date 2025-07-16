@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { Mail, Phone, MapPin, Linkedin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Send, Navigation, Maximize2, ExternalLink } from 'lucide-react';
 
 interface FormData {
   name: string;
@@ -15,12 +15,25 @@ const Contact: React.FC = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+  const [mapExpanded, setMapExpanded] = useState(false);
 
   const onSubmit = (data: FormData) => {
     console.log('Form submitted:', data);
     // Here you would typically send the data to your backend
     alert('Thank you for your message! I\'ll get back to you soon.');
     reset();
+  };
+
+  const handleGetDirections = () => {
+    const destination = "711 W Broadway Rd, Tempe, AZ 85282";
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+    window.open(url, '_blank');
+  };
+
+  const handleViewOnMaps = () => {
+    const location = "711 W Broadway Rd, Tempe, AZ 85282";
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+    window.open(url, '_blank');
   };
 
   const contactInfo = [
@@ -39,14 +52,14 @@ const Contact: React.FC = () => {
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Tempe, AZ',
-      link: '#'
+      value: '711 W Broadway Rd, Tempe, AZ',
+      link: 'https://www.google.com/maps/dir//711+W+Broadway+Rd,+Tempe,+AZ+85282/@33.4069878,-112.0318225,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x872b09b64faa251d:0x5c32eba7135bd1e8!2m2!1d-111.9494213!2d33.407015?entry=ttu&g_ep=EgoyMDI1MDcxMy4wIKXMDSoASAFQAw%3D%3D'
     },
     {
       icon: Linkedin,
       label: 'LinkedIn',
-      value: 'linkedin.com/in/SAKSHI-KHADE',
-      link: 'https://linkedin.com/in/SAKSHI-KHADE'
+      value: 'linkedin.com/in/sakshikhade16/',
+      link: 'https://linkedin.com/in/sakshikhade16/',
     }
   ];
 
@@ -63,134 +76,221 @@ const Contact: React.FC = () => {
             Get In Touch
           </h2>
           
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
-            {/* Contact Information */}
+          <div className="max-w-6xl mx-auto">
+            {/* Map with Overlay Content */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="space-y-8"
+              className="relative"
             >
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  Let's Connect
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  I'm always interested in discussing new opportunities, 
-                  innovative projects, or simply connecting with fellow 
-                  professionals in the AI and robotics field.
-                </p>
-              </div>
-              
-              <div className="space-y-6">
-                {contactInfo.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
+              {/* Background Map */}
+              <div className="relative h-[700px] rounded-2xl overflow-hidden shadow-2xl">
+                {/* Map Background Gradient */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800"
+                  style={{
+                    backgroundImage: `radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                                     radial-gradient(circle at 70% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%)`,
+                  }}
+                />
+                
+                {/* Google Maps Iframe */}
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3327.167076837946!2d-111.95220892535325!3d33.40701499996741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x872b09b64faa251d%3A0x5c32eba7135bd1e8!2s711%20W%20Broadway%20Rd%2C%20Tempe%2C%20AZ%2085282!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="711 W Broadway Rd, Tempe, AZ 85282"
+                  className="absolute inset-0"
+                />
+                
+                {/* Overlay Content */}
+                <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${
+                  mapExpanded ? 'bg-black bg-opacity-20' : 'bg-black bg-opacity-40'
+                }`}>
+                  <div className={`grid lg:grid-cols-2 gap-8 w-full max-w-5xl mx-4 transition-all duration-500 ${
+                    mapExpanded ? 'opacity-0 pointer-events-none scale-95' : 'opacity-100 pointer-events-auto scale-100'
+                  }`}>
+                    
+                    {/* Contact Information Card */}
                     <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                      className="flex items-center space-x-4"
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={isInView ? { opacity: 1, x: 0 } : {}}
+                      transition={{ duration: 0.6, delay: 0.4 }}
+                      className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95"
                     >
-                      <div className="p-3 bg-maroon-100 dark:bg-maroon-900 rounded-lg">
-                        <Icon className="w-5 h-5 text-maroon-600 dark:text-maroon-300" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                          {item.label}
-                        </p>
-                        <a
-                          href={item.link}
-                          className="text-gray-900 dark:text-white hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
-                          target={item.link.startsWith('http') ? '_blank' : undefined}
-                          rel={item.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                        >
-                          {item.value}
-                        </a>
+                      <div className="space-y-8">
+                        <div>
+                          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                            Let's Connect
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            I'm always interested in discussing new opportunities, 
+                            innovative projects, or simply connecting with fellow 
+                            professionals in the AI and robotics field.
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          {contactInfo.map((item, index) => {
+                            const Icon = item.icon;
+                            return (
+                              <motion.div
+                                key={item.label}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                                transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
+                                className="flex items-center space-x-4"
+                              >
+                                <div className="p-3 bg-maroon-100 dark:bg-maroon-900 rounded-lg">
+                                  <Icon className="w-5 h-5 text-maroon-600 dark:text-maroon-300" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    {item.label}
+                                  </p>
+                                  <a
+                                    href={item.link}
+                                    className="text-gray-900 dark:text-white hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
+                                    target={item.link.startsWith('http') ? '_blank' : undefined}
+                                    rel={item.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                  >
+                                    {item.value}
+                                  </a>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                        
+                        {/* Map Action Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                          <button
+                            onClick={handleGetDirections}
+                            className="flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                          >
+                            <Navigation className="w-4 h-4" />
+                            <span>Get Directions</span>
+                          </button>
+                          <button
+                            onClick={handleViewOnMaps}
+                            className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            <span>View on Maps</span>
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
-                  );
-                })}
+
+                    {/* Contact Form Card */}
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={isInView ? { opacity: 1, x: 0 } : {}}
+                      transition={{ duration: 0.6, delay: 0.6 }}
+                      className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95"
+                    >
+                      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div>
+                          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Name
+                          </label>
+                          <input
+                            type="text"
+                            id="name"
+                            {...register('name', { required: 'Name is required' })}
+                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-maroon-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            placeholder="Your name"
+                          />
+                          {errors.name && (
+                            <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                              {errors.name.message}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Email
+                          </label>
+                          <input
+                            type="email"
+                            id="email"
+                            {...register('email', { 
+                              required: 'Email is required',
+                              pattern: {
+                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                message: 'Invalid email address'
+                              }
+                            })}
+                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-maroon-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            placeholder="your.email@example.com"
+                          />
+                          {errors.email && (
+                            <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                              {errors.email.message}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Message
+                          </label>
+                          <textarea
+                            id="message"
+                            rows={4}
+                            {...register('message', { required: 'Message is required' })}
+                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-maroon-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            placeholder="Tell me about your project or just say hello!"
+                          />
+                          {errors.message && (
+                            <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                              {errors.message.message}
+                            </p>
+                          )}
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-maroon-600 text-white rounded-lg hover:bg-maroon-700 transition-colors"
+                        >
+                          <Send className="w-5 h-5" />
+                          <span>Send Message</span>
+                        </button>
+                      </form>
+                    </motion.div>
+                  </div>
+                </div>
+                
+                {/* Map Expand Button */}
+                <div className="absolute top-6 right-6 z-20">
+                  <button
+                    onClick={() => setMapExpanded(!mapExpanded)}
+                    className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-xl hover:shadow-2xl transition-all backdrop-blur-sm bg-opacity-90"
+                    title={mapExpanded ? "Show Contact Details" : "Focus on Map"}
+                  >
+                    <Maximize2 className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  </button>
+                </div>
+                
+                {/* Location Info Badge */}
+                <div className="absolute bottom-6 left-6 z-20 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl backdrop-blur-sm bg-opacity-90">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-maroon-100 dark:bg-maroon-900 rounded-lg">
+                      <MapPin className="w-5 h-5 text-maroon-600 dark:text-maroon-300" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">711 W Broadway Rd</h4>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">Tempe, AZ 85282</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg"
-            >
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    {...register('name', { required: 'Name is required' })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-maroon-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    placeholder="Your name"
-                  />
-                  {errors.name && (
-                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                      {errors.name.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    {...register('email', { 
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
-                      }
-                    })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-maroon-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    placeholder="your.email@example.com"
-                  />
-                  {errors.email && (
-                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={5}
-                    {...register('message', { required: 'Message is required' })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-maroon-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    placeholder="Tell me about your project or just say hello!"
-                  />
-                  {errors.message && (
-                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                      {errors.message.message}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-maroon-600 text-white rounded-lg hover:bg-maroon-700 transition-colors"
-                >
-                  <Send className="w-5 h-5" />
-                  <span>Send Message</span>
-                </button>
-              </form>
             </motion.div>
           </div>
         </motion.div>
