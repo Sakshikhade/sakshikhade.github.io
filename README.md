@@ -203,7 +203,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Sakshi Khade**
 - Email: [skhade5@asu.edu](mailto:skhade5@asu.edu)
-- LinkedIn: [linkedin.com/in/sakshi-khade](https://linkedin.com/in/sakshi-khade)
+- LinkedIn: [linkedin.com/in/sakshikhade16](https://www.linkedin.com/in/sakshikhade16/)
 - GitHub: [github.com/sakshikhade](https://github.com/sakshikhade)
 
 **Project Repository:** [https://github.com/sakshikhade/portfolio](https://github.com/sakshikhade/portfolio)
