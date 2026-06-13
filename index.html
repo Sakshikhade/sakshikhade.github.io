@@ -2,12 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        var stored = localStorage.getItem('theme');
+        var isDark = stored === 'dark' || !stored;
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Sakshi Khade - AI & Robotics Engineer</title>
     <meta name="description" content="Sakshi Khade is an AI & Robotics M.S. candidate at ASU, specializing in data engineering, machine learning, and autonomous systems. Explore her portfolio of innovative projects and professional experience." />
     <meta name="keywords" content="Sakshi Khade, AI Engineer, Robotics, Machine Learning, Data Engineering, ASU, Arizona State University, Python, React, Portfolio" />
     <meta name="author" content="Sakshi Khade" />
+    
+    <!-- Mobile-specific meta tags -->
+    <meta name="theme-color" content="#c85454" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Sakshi Khade" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Sakshi Khade - AI & Robotics Engineer" />
@@ -49,8 +68,8 @@
       }(window.location))
     </script>
     <!-- End Single Page Apps for GitHub Pages -->
-    <script type="module" crossorigin src="/assets/index-eV6NDsPS.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-bi-jiYDO.css">
+    <script type="module" crossorigin src="/assets/index-Y8WJpApz.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BbsyPzHE.css">
   </head>
   <body>
     <div id="root"></div>
