@@ -4,6 +4,7 @@ import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Mail, Phone, MapPin, Linkedin, Send } from 'lucide-react';
+import darkMap from '../assets/dark_map.png';
 
 interface FormData {
   name: string;
@@ -45,31 +46,42 @@ const Contact: React.FC = () => {
     {
       icon: Linkedin,
       label: 'LinkedIn',
-      value: 'linkedin.com/in/SAKSHI-KHADE',
-      link: 'https://linkedin.com/in/SAKSHI-KHADE'
+      value: 'linkedin.com/in/sakshikhade16',
+      link: 'https://www.linkedin.com/in/sakshikhade16/'
     }
   ];
 
   return (
-    <section id="contact" className="py-12 sm:py-16 md:py-20 bg-gray-50 dark:bg-gray-800">
-      <div className="container mx-auto px-4">
+    <section id="contact" className="py-12 sm:py-16 md:py-20 w-full min-h-screen flex flex-col justify-center relative overflow-hidden">
+      {/* Map Background for the entire section */}
+      <div className="absolute inset-0 z-0 select-none pointer-events-none">
+        <img 
+          src={darkMap} 
+          alt="Tempe AZ Map" 
+          className="w-full h-full object-cover filter brightness-[0.7] dark:brightness-[0.35] contrast-115 saturate-[0.8] dark:saturate-[0.5] opacity-90"
+        />
+        {/* Soft edge-blending gradients */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fdfcff] via-transparent to-[#fdfcff] dark:from-[#06020d] dark:via-transparent dark:to-[#06020d]" />
+      </div>
+
+      <div className="container mx-auto px-4 max-w-5xl text-center my-auto relative z-10">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 dark:text-white mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-8 sm:mb-12">
             Get In Touch
           </h2>
           
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12">
-            {/* Contact Information */}
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 text-left items-stretch mt-4 sm:mt-8">
+            {/* Left Column (Let's Connect details on transparent glass card) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="space-y-6 sm:space-y-8"
+              className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/30 dark:border-purple-500/15 shadow-lg space-y-6 bg-white/85 dark:bg-[#0c051a]/85 backdrop-blur-md flex flex-col justify-between"
             >
               <div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
@@ -82,27 +94,27 @@ const Contact: React.FC = () => {
                 </p>
               </div>
               
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-4">
                 {contactInfo.map((item, index) => {
                   const Icon = item.icon;
                   return (
                     <motion.div
                       key={item.label}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 15 }}
                       animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+                      transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                       className="flex items-center space-x-3 sm:space-x-4"
                     >
-                      <div className="p-2 sm:p-3 bg-maroon-100 dark:bg-maroon-900 rounded-lg flex-shrink-0">
-                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-maroon-600 dark:text-maroon-300" />
+                      <div className="p-2.5 bg-maroon-100/80 dark:bg-maroon-900/40 rounded-xl mr-3 border border-maroon-500/10 flex-shrink-0">
+                        <Icon className="w-5 h-5 text-maroon-600 dark:text-gold-400" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
                           {item.label}
                         </p>
                         <a
                           href={item.link}
-                          className="text-gray-900 dark:text-white hover:text-maroon-600 dark:hover:text-gold-400 transition-colors text-sm sm:text-base break-all"
+                          className="text-gray-900 dark:text-white hover:text-maroon-600 dark:hover:text-gold-400 transition-colors text-sm sm:text-base font-semibold break-all"
                           target={item.link.startsWith('http') ? '_blank' : undefined}
                           rel={item.link.startsWith('http') ? 'noopener noreferrer' : undefined}
                         >
@@ -115,12 +127,12 @@ const Contact: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Contact Form */}
+            {/* Right Column (Contact Form on transparent glass card) */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg"
+              className="glass-panel p-6 sm:p-8 rounded-2xl shadow-lg border border-white/30 dark:border-purple-500/15 bg-white/85 dark:bg-[#0c051a]/85 backdrop-blur-md flex flex-col justify-between"
             >
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
                 <div>

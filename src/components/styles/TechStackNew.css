@@ -1,0 +1,284 @@
+.techstack-new {
+  --accentColor: #7c3aed;
+  --fadeColor: #fdfcff;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 80px 0;
+}
+
+/* In dark mode, change variables */
+.dark .techstack-new {
+  --accentColor: #d946ef;
+  --fadeColor: #06020d;
+}
+
+/* Video Background */
+.techstack-video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.techstack-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dark Overlay */
+.techstack-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+/* Top gradient fade - blends with section above */
+.techstack-video-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(to bottom, var(--fadeColor) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Bottom gradient fade - blends with section below */
+.techstack-video-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(to top, var(--fadeColor) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Content */
+.techstack-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.techstack-content h2 {
+  font-size: 70px;
+  text-align: center;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-bottom: 50px;
+  background: linear-gradient(180deg, #ffffff 20%, #d946ef 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Light mode heading adjustments for better visibility */
+.techstack-new:not(.dark) .techstack-content h2 {
+  background: linear-gradient(180deg, #6d28d9 0%, #7c3aed 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Pyramid Container */
+.techstack-pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Each Row */
+.techstack-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Tech Item */
+.techstack-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 68px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* In light mode, items should have slightly more contrast if the background is light */
+.techstack-new:not(.dark) .techstack-item {
+  background: rgba(124, 58, 237, 0.03);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.techstack-item:hover {
+  transform: translateY(-6px) scale(1.08);
+  background: rgba(124, 58, 237, 0.15);
+  border-color: var(--accentColor);
+  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.25);
+}
+
+.dark .techstack-item:hover {
+  background: rgba(217, 70, 239, 0.15);
+  border-color: var(--accentColor);
+  box-shadow: 0 8px 30px rgba(217, 70, 239, 0.25);
+}
+
+.techstack-item img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+/* In light mode, set slightly different base opacity */
+.techstack-new:not(.dark) .techstack-item img {
+  opacity: 0.6;
+}
+
+.techstack-item:hover img {
+  filter: grayscale(0%) !important;
+  opacity: 1 !important;
+}
+
+.techstack-item span {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 5px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50px;
+}
+
+.techstack-new:not(.dark) .techstack-item span {
+  color: rgba(15, 6, 8, 0.85);
+}
+
+.techstack-item:hover span {
+  color: #fff;
+}
+
+.techstack-new:not(.dark) .techstack-item:hover span {
+  color: #6d28d9;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media screen and (max-width: 1200px) {
+  .techstack-content {
+    max-width: 900px;
+  }
+  
+  .techstack-item {
+    width: 50px;
+    height: 62px;
+  }
+  
+  .techstack-item img {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .techstack-item span {
+    font-size: 8px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .techstack-content h2 {
+    font-size: 50px;
+    margin-bottom: 35px;
+  }
+  
+  .techstack-pyramid {
+    gap: 8px;
+  }
+  
+  .techstack-row {
+    gap: 8px;
+  }
+  
+  .techstack-item {
+    width: 45px;
+    height: 56px;
+    padding: 6px;
+  }
+  
+  .techstack-item img {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .techstack-item span {
+    font-size: 7px;
+    max-width: 42px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .techstack-content h2 {
+    font-size: 36px;
+  }
+  
+  .techstack-pyramid {
+    gap: 6px;
+  }
+  
+  .techstack-row {
+    gap: 6px;
+  }
+  
+  .techstack-item {
+    width: 40px;
+    height: 50px;
+    padding: 5px;
+    border-radius: 8px;
+  }
+  
+  .techstack-item img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .techstack-item span {
+    font-size: 6px;
+    max-width: 38px;
+    margin-top: 3px;
+  }
+}

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useScrollAnimation } from './hooks/useScrollAnimation';
+import { motion } from 'framer-motion';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -12,20 +11,19 @@ import Education from './components/Education';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
+const sections = [
+  { id: 'hero', component: Hero },
+  { id: 'about', component: About },
+  { id: 'skills', component: Skills },
+  { id: 'experience', component: Experience },
+  { id: 'projects', component: Projects },
+  { id: 'education', component: Education },
+  { id: 'contact', component: Contact }
+];
+
 function App() {
   const [activeSection, setActiveSection] = useState('hero');
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  const sections = [
-    { id: 'hero', component: Hero },
-    { id: 'about', component: About },
-    { id: 'skills', component: Skills },
-    { id: 'experience', component: Experience },
-    { id: 'projects', component: Projects },
-    { id: 'education', component: Education },
-    { id: 'contact', component: Contact }
-  ];
 
   useEffect(() => {
     // Simulate loading time for better UX
@@ -37,41 +35,45 @@ function App() {
   }, []);
 
   const navigateToSection = (sectionId: string) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setActiveSection(sectionId);
-    setTimeout(() => setIsTransitioning(false), 300);
-  };
-
-  const nextSection = () => {
-    if (isTransitioning) return;
-    const currentIndex = sections.findIndex(s => s.id === activeSection);
-    if (currentIndex < sections.length - 1) {
-      navigateToSection(sections[currentIndex + 1].id);
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      setActiveSection(sectionId);
     }
   };
 
-  const prevSection = () => {
-    if (isTransitioning) return;
-    const currentIndex = sections.findIndex(s => s.id === activeSection);
-    if (currentIndex > 0) {
-      navigateToSection(sections[currentIndex - 1].id);
-    }
-  };
+  // Tracking section elements during normal scroll mode
+  useEffect(() => {
+    if (isLoading) return;
 
-  // Use the touch gesture hook
-  useScrollAnimation({
-    onNext: nextSection,
-    onPrev: prevSection,
-    isTransitioning
-  });
+    const mainEl = document.querySelector('main');
+    const observerOptions = {
+      root: mainEl,
+      rootMargin: '-40% 0px -40% 0px', // Trigger when crossing the central band of view
+      threshold: 0
+    };
 
-  const CurrentComponent = sections.find(s => s.id === activeSection)?.component || Hero;
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    sections.forEach((section) => {
+      const el = document.getElementById(section.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [isLoading]);
 
   if (isLoading) {
     return (
       <ThemeProvider>
-        <div className="h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+        <div className="h-screen bg-[#fdfcff] dark:bg-[#06020d] flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -96,56 +98,28 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="h-screen overflow-hidden bg-white dark:bg-gray-900 transition-colors">
-        <Header activeSection={activeSection} onNavigate={navigateToSection} />
+      <div className="h-screen overflow-hidden bg-gradient-to-br from-[#fdfcff] via-[#f9f8ff] to-[#f3f0ff] dark:from-[#06020d] dark:via-[#0f0524] dark:to-[#1d0a42] transition-colors relative cyber-grid">
+        {/* Background Glowing Ambient Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[250px] sm:w-[450px] h-[250px] sm:h-[450px] bg-violet-500/10 dark:bg-violet-500/10 rounded-full filter blur-[80px] sm:blur-[120px] pointer-events-none glow-pulse-1" />
+        <div className="absolute bottom-1/4 right-1/4 w-[250px] sm:w-[450px] h-[250px] sm:h-[450px] bg-fuchsia-500/10 dark:bg-fuchsia-500/10 rounded-full filter blur-[80px] sm:blur-[120px] pointer-events-none glow-pulse-2" />
+        <div className="absolute top-1/3 right-1/3 w-[200px] sm:w-[350px] h-[200px] sm:h-[350px] bg-pink-500/5 dark:bg-pink-500/5 rounded-full filter blur-[80px] sm:blur-[120px] pointer-events-none glow-pulse-1" />
+
+        <Header 
+          activeSection={activeSection} 
+          onNavigate={navigateToSection} 
+        />
         
-        {/* Section Indicators */}
-        <div className="fixed right-4 md:right-6 top-1/2 transform -translate-y-1/2 z-40 flex flex-col space-y-2 md:space-y-3 hidden sm:flex">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => navigateToSection(section.id)}
-              className={`w-1.5 h-1.5 rounded-full border transition-all duration-300 ${
-                activeSection === section.id
-                  ? 'bg-maroon-600 border-maroon-600 dark:bg-gold-400 dark:border-gold-400'
-                  : 'bg-transparent border-gray-400 hover:border-maroon-600 dark:hover:border-gold-400'
-              }`}
-              aria-label={`Go to ${section.id} section`}
-            />
-          ))}
-        </div>
-        
-        {/* Mobile Section Indicator */}
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 flex space-x-2 sm:hidden">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => navigateToSection(section.id)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                activeSection === section.id
-                  ? 'bg-maroon-600 dark:bg-gold-400'
-                  : 'bg-gray-300 dark:bg-gray-600'
-              }`}
-              aria-label={`Go to ${section.id} section`}
-            />
-          ))}
-        </div>
-        
-        <main className="h-full">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSection}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="h-full"
-            >
-              <CurrentComponent />
-            </motion.div>
-          </AnimatePresence>
+        <main className="h-full overflow-y-auto scroll-smooth pt-16 sm:pt-20">
+          {sections.map((section) => {
+            const Comp = section.component;
+            return (
+              <div key={section.id} id={section.id} className="relative w-full">
+                <Comp />
+              </div>
+            );
+          })}
+          <Footer />
         </main>
-        {activeSection === 'contact' && <Footer />}
       </div>
     </ThemeProvider>
   );

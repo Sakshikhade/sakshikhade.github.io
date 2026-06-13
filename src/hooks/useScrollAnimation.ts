@@ -5,14 +5,17 @@ interface UseScrollAnimationProps {
   onNext: () => void;
   onPrev: () => void;
   isTransitioning: boolean;
+  isEnabled: boolean;
 }
 
-export const useScrollAnimation = ({ onNext, onPrev, isTransitioning }: UseScrollAnimationProps) => {
+export const useScrollAnimation = ({ onNext, onPrev, isTransitioning, isEnabled }: UseScrollAnimationProps) => {
   const touchStartY = useRef<number | null>(null);
   const touchEndY = useRef<number | null>(null);
   const minSwipeDistance = 50;
 
   useEffect(() => {
+    if (!isEnabled) return;
+    
     let isScrolling = false;
     let scrollDirection = 0;
     
@@ -100,13 +103,14 @@ export const useScrollAnimation = ({ onNext, onPrev, isTransitioning }: UseScrol
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [onNext, onPrev, isTransitioning]);
+  }, [onNext, onPrev, isTransitioning, isEnabled]);
 };
 
 export const useTitleAnimation = (margin: string = "-50px") => {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: true, 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     margin: margin as any,
     amount: 0.3
   });

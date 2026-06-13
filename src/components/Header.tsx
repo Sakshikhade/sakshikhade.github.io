@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Menu, X } from 'lucide-react';
+import { Moon, Sun, Menu, X, Presentation, Mouse } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface HeaderProps {
@@ -14,10 +14,26 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const mainEl = document.querySelector('main');
+      if (mainEl) {
+        setIsScrolled(mainEl.scrollTop > 50);
+      } else {
+        setIsScrolled(window.scrollY > 50);
+      }
     };
+    
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.addEventListener('scroll', handleScroll);
+    }
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (mainEl) {
+        mainEl.removeEventListener('scroll', handleScroll);
+      }
+    };
   }, []);
 
   const navItems = [
@@ -37,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg' 
+        ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg border-b border-gray-100 dark:border-gray-800' 
         : 'bg-transparent'
     }`}>
       <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
